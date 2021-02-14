@@ -2,7 +2,7 @@
 
 var L = require('leaflet');
 var Geocoder = require('leaflet-control-geocoder');
-var LRM = require('leaflet-routing-machine');
+var LRM = require('@jonathan-navagis/leaflet-routing-machine');
 var locate = require('leaflet.locatecontrol');
 var options = require('./lrm_options');
 var links = require('./links');

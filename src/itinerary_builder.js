@@ -100,6 +100,7 @@ module.exports = function (language) {
       L.DomUtil.create('col', 'leaflet-routing-instruction-icon', colgroup);
       L.DomUtil.create('col', 'leaflet-routing-instruction-text', colgroup);
       L.DomUtil.create('col', 'leaflet-routing-instruction-distance', colgroup);
+      L.DomUtil.create('col', 'leaflet-routing-instruction-weight', colgroup);
 
       return table;
     },
@@ -108,7 +109,7 @@ module.exports = function (language) {
       return L.DomUtil.create('tbody', '');
     },
 
-    createStep: function(text, distance, icon, steps) {
+    createStep: function(text, distance, icon, steps, weight) {
       var row = L.DomUtil.create('tr', '', steps),
         span,
         td;
@@ -141,6 +142,9 @@ module.exports = function (language) {
         td = L.DomUtil.create('td', 'distance', row);
         td.appendChild(document.createTextNode(distance));
       }
+
+      td = L.DomUtil.create('td', 'weight', row);
+      td.appendChild(document.createTextNode(weight));
 
       return row;
     }
