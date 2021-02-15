@@ -10,6 +10,7 @@ ENV OSRM_LABEL='Car (fastest)'
 # Copy package.json
 RUN mkdir -p /src
 COPY package.json /src
+COPY .npmrc /src
 
 # Install app dependencies
 RUN apk add --no-cache sed nodejs && \
