@@ -18,6 +18,7 @@ on:
 env:
   # TODO: Change variable to your image's name.
   IMAGE_NAME: osrm-frontend
+  PROJECT_NAME: project-arc-236712
 
 jobs:
   # Run tests.
@@ -28,7 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Run tests
+      - name: Build and Run tests
         run: |
           if [ -f docker-compose.test.yml ]; then
             docker-compose --file docker-compose.test.yml build
@@ -50,9 +51,21 @@ jobs:
       - name: Build image
         run: docker build . --file ./docker/Dockerfile --tag $IMAGE_NAME --tag latest --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
 
-      - name: Google Cloud Container Registry
-        uses: mattes/gce-docker-push-action@v1.0.0
-        with:
-          creds: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-          src: $IMAGE_NAME:latest
-          dst: asia.gcr.io/project-arc-236712/$IMAGE_NAME:${{github.run_number}}-${{github.sha}}
+      - name: Log into registry
+        run: docker login gcr.io -u _json_key -p ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+      - name: Push image
+        run: |
+          IMAGE_ID=asia.gcr.io/$PROJECT_NAME/$IMAGE_NAME
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "$default-branch" ] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
