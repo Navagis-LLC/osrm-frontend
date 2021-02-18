@@ -52,7 +52,7 @@ jobs:
         run: docker build . --file ./docker/Dockerfile --tag $IMAGE_NAME --tag latest --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
 
       - name: Log into registry
-        run: echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' | docker login gcr.io -u _json_key --password-stdin
+        run: echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' | docker login asia.gcr.io -u _json_key --password-stdin
 
       - name: Push image
         run: |
